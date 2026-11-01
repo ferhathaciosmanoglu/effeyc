@@ -1,0 +1,10 @@
+const root=document.documentElement,$=id=>document.getElementById(id);
+const saved=localStorage.getItem('kv-theme');
+root.dataset.theme=saved||(matchMedia('(prefers-color-scheme: light)').matches?'light':'dark');
+$('theme').onclick=()=>{root.dataset.theme=root.dataset.theme==='dark'?'light':'dark';localStorage.setItem('kv-theme',root.dataset.theme)};
+const open=()=>{$('sheet').classList.add('open');if(!$('qr').children.length&&window.QRCode)new QRCode($('qr'),{text:'https://kartvizit.example/demo',width:180,height:180,colorDark:'#111113',colorLight:'#ffffff'})};
+const close=()=>$('sheet').classList.remove('open');
+$('share').onclick=open;$('qrbtn').onclick=open;
+$('sheet').addEventListener('click',e=>{if(e.target===$('sheet')||e.target.textContent==='Kapat')close()});
+addEventListener('keydown',e=>{if(e.key==='Escape')close()});
+if(location.hash==='#qr')open();

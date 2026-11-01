@@ -1,0 +1,5 @@
+# Yerel test için: bu dosyayı ".dev.vars" olarak kopyalayıp doldurun (".dev.vars" git'e eklenmez).
+# Çalıştırma: npm run build && npm run pages:dev   →   http://localhost:8788
+RESEND_API_KEY=re_xxxxxxxxxxxxxxxxxxxxxxxx
+CONTACT_TO=siz@ornek.com
+CONTACT_FROM=effeyc <iletisim@alanadiniz.com>

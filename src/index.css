@@ -1,0 +1,696 @@
+/*
+ * Global stiller: tasarım token'ları, Tailwind teması, liquid glass yardımcıları,
+ * arka plan (orb + grain), scroll reveal ve hareket azaltma kuralları.
+ * Renkleri değiştirmek için yalnızca :root içindeki değişkenleri düzenlemen yeterli.
+ */
+@import "tailwindcss";
+
+/* Kendi sunucumuzdan sunulan yazı tipleri (Inter, Poppins — SIL Open Font License; lisanslar src/assets/fonts içinde) */
+@font-face {
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url("./assets/fonts/inter-latin-ext-wght-normal.woff2") format("woff2-variations");
+  unicode-range: U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF;
+}
+@font-face {
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url("./assets/fonts/inter-latin-wght-normal.woff2") format("woff2-variations");
+  unicode-range: U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;
+}
+@font-face {
+  font-family: "Poppins";
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("./assets/fonts/poppins-latin-ext-500-normal.woff2") format("woff2");
+  unicode-range: U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF;
+}
+@font-face {
+  font-family: "Poppins";
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("./assets/fonts/poppins-latin-500-normal.woff2") format("woff2");
+  unicode-range: U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;
+}
+@font-face {
+  font-family: "Poppins";
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("./assets/fonts/poppins-latin-ext-600-normal.woff2") format("woff2");
+  unicode-range: U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF;
+}
+@font-face {
+  font-family: "Poppins";
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("./assets/fonts/poppins-latin-600-normal.woff2") format("woff2");
+  unicode-range: U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;
+}
+@font-face {
+  font-family: "Poppins";
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("./assets/fonts/poppins-latin-ext-700-normal.woff2") format("woff2");
+  unicode-range: U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF;
+}
+@font-face {
+  font-family: "Poppins";
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("./assets/fonts/poppins-latin-700-normal.woff2") format("woff2");
+  unicode-range: U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;
+}
+
+/* ---------- 0) Font fallback metrikleri ----------
+ * Web fontu yüklenene kadar kullanılan sistem fontunu Poppins/Inter ölçülerine yaklaştırır;
+ * böylece font değiştiğinde metin yeniden akmaz ve düzen kayması (CLS) oluşmaz.
+ */
+@font-face {
+  font-family: "Poppins Fallback";
+  src: local("Arial"), local("Helvetica"), local("Liberation Sans"), local("Roboto");
+  size-adjust: 112.16%;
+  ascent-override: 93.62%;
+  descent-override: 31.21%;
+  line-gap-override: 8.92%;
+}
+@font-face {
+  font-family: "Inter Fallback";
+  src: local("Arial"), local("Helvetica"), local("Liberation Sans"), local("Roboto");
+  size-adjust: 107.12%;
+  ascent-override: 90.44%;
+  descent-override: 22.52%;
+  line-gap-override: 0%;
+}
+
+/* ---------- 1) Tasarım token'ları (açık tema) ---------- */
+:root {
+  --bg: #f6f6f4;
+  --bg-2: #ffffff;
+  /* Gri kademeleri açık temada TERS çevrilidir: 300 = koyu metin tonu, 900 = açık yüzey */
+  --gray-900: #efefed;
+  --gray-800: #e4e4e1;
+  --gray-700: #d2d2d0;
+  --gray-500: #74747c;
+  --gray-300: #3f3f46;
+  --text: #111113;
+  --text-muted: #55555d;
+
+  /* Turuncu: yalnızca küçük vurgularda kullanılır */
+  --orange-700: #9a3412;
+  --orange-600: #e8530a;
+  --orange-500: #ff6a1a;
+  --orange-400: #ff8a3d;
+  --orange-300: #ffb26b;
+  --ember: #7c2d12;
+  --on-orange: #0a0a0a;
+  --gradient-orange: linear-gradient(135deg, #b93c0a 0%, #e8530a 55%, #f26a10 100%);
+  --gradient-ember: linear-gradient(160deg, #1a0a03 0%, #7c2d12 55%, #ff6a1a 100%);
+
+  /* Liquid glass (açık) */
+  --glass-bg: linear-gradient(135deg, rgba(255, 255, 255, 0.78), rgba(255, 255, 255, 0.42));
+  --glass-border: rgba(17, 17, 19, 0.09);
+  --glass-blur: 24px;
+  --radius-md: 16px;
+  --radius-lg: 24px;
+  --radius-pill: 999px;
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
+
+  /* Odak halkası */
+  --focus-ring: 0 0 0 2px var(--bg), 0 0 0 4px var(--orange-500);
+
+  /* Tema bağımlı yüzey/çizgi/gölge değişkenleri (koyu ve loş tema aşağıda yeniden tanımlanır) */
+  --surface: #ffffff;
+  --surface-2: #f1f1ef;
+  --line: rgba(17, 17, 19, 0.1);
+  --tint: rgba(17, 17, 19, 0.04);
+  --tint-2: rgba(17, 17, 19, 0.07);
+  --hi: rgba(255, 255, 255, 0.95);
+  --spot: rgba(255, 255, 255, 0.75);
+  --drop: rgba(20, 20, 30, 0.08);
+  --drop-strong: rgba(20, 20, 30, 0.12);
+  --nav-glass: rgba(255, 255, 255, 0.62);
+  --pill-top: rgba(255, 255, 255, 0.92);
+  --pill-bot: rgba(255, 255, 255, 0.55);
+  --dialog-bg: rgba(255, 255, 255, 0.9);
+  --field-bg: rgba(255, 255, 255, 0.7);
+  --eyebrow: #9a3412;
+  --logo-a: #3a3a3e;
+  --logo-b: #131315;
+  --logo-shadow: rgba(20, 20, 30, 0.22);
+  --hero-planet: radial-gradient(ellipse at 50% 0%, #ffffff 0%, rgba(255, 255, 255, 0.7) 30%, rgba(255, 255, 255, 0) 60%);
+  --switch-bg: rgba(255, 255, 255, 0.55);
+  --thumb-bg: rgba(255, 255, 255, 0.95);
+
+  color-scheme: light;
+}
+
+/* ---------- Koyu tema ---------- */
+[data-theme="dark"] {
+  --bg: #0b0b0d;
+  --bg-2: #111114;
+  --gray-900: #17171a;
+  --gray-800: #202024;
+  --gray-700: #2e2e34;
+  --gray-500: #8a8a93;
+  --gray-300: #d4d4d8;
+  --text: #f4f4f5;
+  --text-muted: #a1a1aa;
+  --gradient-orange: linear-gradient(135deg, #ff7a2a 0%, #ff9a3c 55%, #ffc58a 100%);
+  --glass-bg: linear-gradient(135deg, rgba(255, 255, 255, 0.09), rgba(255, 255, 255, 0.035));
+  --glass-border: rgba(255, 255, 255, 0.12);
+  --surface: #16161a;
+  --surface-2: #1e1e23;
+  --line: rgba(255, 255, 255, 0.12);
+  --tint: rgba(255, 255, 255, 0.05);
+  --tint-2: rgba(255, 255, 255, 0.09);
+  --hi: rgba(255, 255, 255, 0.2);
+  --spot: rgba(255, 255, 255, 0.1);
+  --drop: rgba(0, 0, 0, 0.45);
+  --drop-strong: rgba(0, 0, 0, 0.6);
+  --nav-glass: rgba(28, 28, 32, 0.55);
+  --pill-top: rgba(255, 255, 255, 0.11);
+  --pill-bot: rgba(255, 255, 255, 0.04);
+  --dialog-bg: rgba(20, 20, 23, 0.9);
+  --field-bg: rgba(255, 255, 255, 0.05);
+  --eyebrow: #ffb26b;
+  --logo-a: #ffffff;
+  --logo-b: #b9b9c4;
+  --logo-shadow: rgba(0, 0, 0, 0.6);
+  --hero-planet: radial-gradient(ellipse at 50% 0%, #1a1a1f 0%, rgba(26, 26, 31, 0.7) 30%, rgba(26, 26, 31, 0) 60%);
+  --switch-bg: rgba(255, 255, 255, 0.07);
+  --thumb-bg: rgba(255, 255, 255, 0.2);
+  color-scheme: dark;
+}
+
+/* ---------- Loş tema (kömür-mavi) ---------- */
+[data-theme="dim"] {
+  --bg: #1b1d23;
+  --bg-2: #22252c;
+  --gray-900: #262a32;
+  --gray-800: #2e323b;
+  --gray-700: #3d424d;
+  --gray-500: #8d93a1;
+  --gray-300: #d8dbe2;
+  --text: #ececf0;
+  --text-muted: #a5a9b5;
+  --gradient-orange: linear-gradient(135deg, #ff7a2a 0%, #ff9a3c 55%, #ffc58a 100%);
+  --glass-bg: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.04));
+  --glass-border: rgba(255, 255, 255, 0.14);
+  --surface: #242830;
+  --surface-2: #2c3039;
+  --line: rgba(255, 255, 255, 0.13);
+  --tint: rgba(255, 255, 255, 0.06);
+  --tint-2: rgba(255, 255, 255, 0.1);
+  --hi: rgba(255, 255, 255, 0.22);
+  --spot: rgba(255, 255, 255, 0.12);
+  --drop: rgba(0, 0, 0, 0.35);
+  --drop-strong: rgba(0, 0, 0, 0.5);
+  --nav-glass: rgba(40, 44, 54, 0.55);
+  --pill-top: rgba(255, 255, 255, 0.12);
+  --pill-bot: rgba(255, 255, 255, 0.05);
+  --dialog-bg: rgba(33, 36, 43, 0.92);
+  --field-bg: rgba(255, 255, 255, 0.06);
+  --eyebrow: #ffb26b;
+  --logo-a: #f5f5f7;
+  --logo-b: #c4c7d1;
+  --logo-shadow: rgba(0, 0, 0, 0.5);
+  --hero-planet: radial-gradient(ellipse at 50% 0%, #2a2e37 0%, rgba(42, 46, 55, 0.7) 30%, rgba(42, 46, 55, 0) 60%);
+  --switch-bg: rgba(255, 255, 255, 0.08);
+  --thumb-bg: rgba(255, 255, 255, 0.22);
+  color-scheme: dark;
+}
+
+/* Mobilde blur daha hafif (performans) */
+@media (max-width: 767px) {
+  :root {
+    --glass-blur: 14px;
+  }
+}
+
+/* ---------- 2) Tailwind temasına bağlama ---------- */
+@theme inline {
+  --color-bg: var(--bg);
+  --color-bg-2: var(--bg-2);
+  --color-gray-900: var(--gray-900);
+  --color-gray-800: var(--gray-800);
+  --color-gray-700: var(--gray-700);
+  --color-gray-500: var(--gray-500);
+  --color-gray-300: var(--gray-300);
+  --color-fg: var(--text);
+  --color-muted: var(--text-muted);
+  --color-orange-700: var(--orange-700);
+  --color-orange-600: var(--orange-600);
+  --color-orange-500: var(--orange-500);
+  --color-orange-400: var(--orange-400);
+  --color-orange-300: var(--orange-300);
+  --color-ember: var(--ember);
+  --color-on-orange: var(--on-orange);
+
+  --font-sans: "Inter", "Inter Fallback", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Poppins", "Poppins Fallback", ui-sans-serif, system-ui, sans-serif;
+
+  --radius-md: var(--radius-md);
+  --radius-lg: var(--radius-lg);
+  --ease-liquid: var(--ease);
+}
+
+/* ---------- 3) Temel ---------- */
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 88px;
+    -webkit-text-size-adjust: 100%;
+  }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    overflow-x: clip;
+  }
+  h1, h2, h3 {
+    font-family: var(--font-display);
+    letter-spacing: -0.025em;
+    line-height: 1.08;
+  }
+  /* programatik odak alan bölümler (tabindex=-1) için halka gösterme */
+  [tabindex="-1"]:focus-visible {
+    box-shadow: none;
+  }
+  ::selection {
+    background: var(--orange-500);
+    color: var(--on-orange);
+  }
+  :focus-visible {
+    outline: none;
+    box-shadow: var(--focus-ring);
+    border-radius: 8px;
+  }
+}
+
+/* ---------- 4) Liquid glass (açık tema) ---------- */
+@utility glass {
+  position: relative;
+  background: var(--glass-bg);
+  backdrop-filter: blur(var(--glass-blur)) saturate(160%);
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(160%);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-lg);
+  /* üst kenarda parlak yansıma + yumuşak, hafif gölge */
+  box-shadow:
+    inset 0 1px 0 var(--hi),
+    inset 0 -1px 0 var(--tint),
+    0 1px 2px var(--drop),
+    0 18px 44px var(--drop);
+  transition:
+    box-shadow 0.35s var(--ease),
+    transform 0.35s var(--ease),
+    border-color 0.35s var(--ease);
+
+  /* sol üstten gelen ışık yansıması; imleç konumuna göre kayar (--mx, --my) */
+  &::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    pointer-events: none;
+    background: radial-gradient(
+      420px circle at var(--mx, 20%) var(--my, 0%),
+      var(--spot),
+      transparent 45%
+    );
+    opacity: 0.8;
+  }
+}
+
+/* Etkileşimli cam (kartlar): hover'da kalkma + çok ince turuncu kenar */
+@utility glass-interactive {
+  @media (hover: hover) {
+    &:hover {
+      transform: translateY(-4px);
+      border-color: rgba(255, 106, 26, 0.4);
+      box-shadow:
+        inset 0 1px 0 var(--hi),
+        0 1px 2px var(--drop),
+        0 26px 60px var(--drop-strong);
+    }
+  }
+}
+
+/* İkincil buton / çip: cam pill */
+@utility glass-pill {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  min-height: 44px;
+  padding-inline: 1.25rem;
+  border-radius: var(--radius-pill);
+  background: linear-gradient(180deg, var(--pill-top), var(--pill-bot));
+  border: 1px solid var(--line);
+  box-shadow:
+    inset 0 1px 0 var(--hi),
+    0 6px 18px var(--drop);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  color: var(--text);
+  font-size: 0.875rem;
+  font-weight: 500;
+  white-space: nowrap;
+  cursor: pointer;
+  transition:
+    border-color 0.3s var(--ease),
+    box-shadow 0.3s var(--ease),
+    background 0.3s var(--ease),
+    transform 0.2s var(--ease);
+
+  @media (hover: hover) {
+    &:hover {
+      border-color: rgba(255, 106, 26, 0.55);
+      box-shadow:
+        inset 0 1px 0 var(--hi),
+        0 0 0 1px rgba(255, 106, 26, 0.15),
+        0 10px 24px var(--drop-strong);
+    }
+  }
+  &:active {
+    transform: scale(0.98);
+  }
+  &:focus-visible {
+    border-radius: var(--radius-pill);
+  }
+}
+
+/* backdrop-filter desteklemeyen tarayıcılar için yedek */
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .glass,
+  .glass-pill {
+    background: var(--surface);
+  }
+}
+
+/* Üst bardaki Liquid Navbar: açık zeminde okunur cam kenar */
+.header-nav .nimbus-glass {
+  background: var(--nav-glass);
+  box-shadow:
+    inset 0 1px 1px var(--hi),
+    inset 0 0 0 1px var(--line),
+    0 12px 32px -14px var(--drop-strong),
+    0 2px 6px var(--drop);
+}
+
+/* Turuncu gradient metin */
+@utility text-gradient-orange {
+  background: var(--gradient-orange);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* Bölüm üst etiketi (eyebrow) */
+@utility eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--eyebrow);
+}
+
+/* Akıcı başlık boyutları */
+@utility text-display {
+  font-size: clamp(2.125rem, 1.1rem + 3.4vw, 4rem);
+}
+@utility text-section {
+  font-size: clamp(1.875rem, 1.2rem + 2.6vw, 3.25rem);
+}
+
+/* ---------- 5) Arka plan: orb'lar + grain ---------- */
+.orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(90px);
+  will-change: transform;
+  animation: orb-drift var(--orb-duration, 28s) var(--ease) infinite alternate;
+}
+@keyframes orb-drift {
+  0% { transform: translate3d(0, 0, 0) scale(1); }
+  50% { transform: translate3d(var(--orb-x, 6vw), var(--orb-y, -4vh), 0) scale(1.08); }
+  100% { transform: translate3d(calc(var(--orb-x, 6vw) * -0.6), calc(var(--orb-y, -4vh) * -1), 0) scale(0.96); }
+}
+.grain {
+  position: absolute;
+  inset: -50%;
+  opacity: 0.045;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0.9 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+  mix-blend-mode: multiply;
+}
+.stars {
+  position: absolute;
+  inset: 0;
+  background-image:
+    radial-gradient(1px 1px at 12% 18%, rgba(255, 255, 255, 0.35), transparent 60%),
+    radial-gradient(1px 1px at 72% 12%, rgba(255, 255, 255, 0.25), transparent 60%),
+    radial-gradient(1px 1px at 38% 66%, rgba(255, 255, 255, 0.2), transparent 60%),
+    radial-gradient(1px 1px at 88% 52%, rgba(255, 255, 255, 0.3), transparent 60%),
+    radial-gradient(1px 1px at 56% 88%, rgba(255, 255, 255, 0.2), transparent 60%),
+    radial-gradient(1px 1px at 22% 82%, rgba(255, 200, 150, 0.3), transparent 60%);
+  background-size: 520px 520px;
+  opacity: 0.6;
+}
+
+/* Hero dev yazısı: font yüklenene kadar gizli (CLS önleme) */
+.big-word {
+  visibility: hidden;
+  opacity: 0;
+  transition: opacity 1.2s var(--ease);
+}
+.fonts-ready .big-word {
+  visibility: visible;
+  opacity: 1;
+}
+
+/* ---------- 6) Scroll reveal ---------- */
+.reveal {
+  opacity: 0;
+  transform: translateY(24px);
+  transition:
+    opacity 0.8s var(--ease),
+    transform 0.8s var(--ease);
+  transition-delay: var(--reveal-delay, 0ms);
+}
+.reveal.is-visible {
+  opacity: 1;
+  transform: none;
+}
+
+/* ---------- 7) Hero grafiği animasyonları ---------- */
+@keyframes spin-slow { to { transform: rotate(360deg); } }
+@keyframes spin-rev { to { transform: rotate(-360deg); } }
+@keyframes float-y {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-12px); }
+}
+@keyframes pulse-glow {
+  0%, 100% { opacity: 0.55; }
+  50% { opacity: 1; }
+}
+@keyframes dash-flow { to { stroke-dashoffset: -200; } }
+@keyframes liquid-morph {
+  0%, 100% { border-radius: 46% 54% 52% 48% / 50% 46% 54% 50%; }
+  33% { border-radius: 54% 46% 44% 56% / 46% 56% 44% 54%; }
+  66% { border-radius: 48% 52% 58% 42% / 56% 44% 56% 44%; }
+}
+.anim-spin-slow { animation: spin-slow 40s linear infinite; transform-origin: center; transform-box: fill-box; }
+.anim-spin-rev { animation: spin-rev 60s linear infinite; transform-origin: center; transform-box: fill-box; }
+.anim-float { animation: float-y 7s ease-in-out infinite; }
+.anim-pulse { animation: pulse-glow 4s ease-in-out infinite; }
+.anim-dash { animation: dash-flow 6s linear infinite; }
+.anim-morph { animation: liquid-morph 14s ease-in-out infinite; }
+
+/* İş akışı: turuncu gradient akış çizgisi */
+@keyframes flow-x { from { background-position: 0% 0; } to { background-position: 200% 0; } }
+@keyframes flow-y { from { background-position: 0 0%; } to { background-position: 0 200%; } }
+.flow-line-x {
+  background: linear-gradient(90deg, transparent, var(--orange-500), var(--orange-300), transparent) 0 0 / 50% 100% repeat-x,
+    var(--line);
+  animation: flow-x 3s linear infinite;
+}
+.flow-line-y {
+  background: linear-gradient(180deg, transparent, var(--orange-500), var(--orange-300), transparent) 0 0 / 100% 50% repeat-y,
+    var(--line);
+  animation: flow-y 3s linear infinite;
+}
+
+/* Hero logosu: parçalar yerine oturur, ardından hafif ışık geçer */
+@keyframes piece-in {
+  from { opacity: 0; transform: translate(var(--px, 0px), var(--py, 0px)); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes shine-sweep {
+  0%, 45% { transform: translateX(0); }
+  100% { transform: translateX(520%); }
+}
+.logo-piece {
+  animation: piece-in 1.2s var(--ease) both;
+  animation-delay: var(--d, 0s);
+}
+.logo-shine {
+  transform-box: fill-box;
+  animation: shine-sweep 7s ease-in-out 2s infinite;
+}
+
+/* Hero logosu: hover'da SVG yerine sıvı parçacık canvas'ı görünür */
+.liquid-logo-canvas {
+  position: absolute;
+  left: -25%;
+  top: -25%;
+  width: 150%;
+  height: 150%;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.35s ease;
+  filter: drop-shadow(0 24px 34px var(--logo-shadow));
+}
+.liquid-logo-svg {
+  transition: opacity 0s;
+}
+.liquid-logo[data-live="1"] .liquid-logo-canvas {
+  opacity: 1;
+}
+/* canvas tamamen görünür olunca SVG gizlenir (üst üste binen aynı görüntü) */
+.liquid-logo[data-live="1"] .liquid-logo-svg {
+  opacity: 0;
+  transition: opacity 0s 0.35s;
+}
+
+/* Filtrelerken kart giriş animasyonu */
+@keyframes card-in {
+  from { opacity: 0; transform: translateY(16px) scale(0.98); }
+  to { opacity: 1; transform: none; }
+}
+.card-in { animation: card-in 0.5s var(--ease) both; }
+
+/* Modal giriş/çıkış */
+@keyframes overlay-in { from { opacity: 0; } to { opacity: 1; } }
+@keyframes dialog-in {
+  from { opacity: 0; transform: translate(-50%, -48%) scale(0.96); }
+  to { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+}
+.dialog-overlay[data-state="open"] { animation: overlay-in 0.25s var(--ease); }
+.dialog-content[data-state="open"] { animation: dialog-in 0.35s var(--ease); }
+
+/* Mobil menü */
+@keyframes menu-in {
+  from { opacity: 0; transform: translateY(-8px) scale(0.98); }
+  to { opacity: 1; transform: none; }
+}
+.menu-in { animation: menu-in 0.3s var(--ease) both; }
+
+/* ---------- 8) Hareket azaltma ---------- */
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+  .reveal { opacity: 1; transform: none; }
+}
+
+/* ---------- Tema anahtarı (Apple liquid glass switcher) ---------- */
+@keyframes scaleToggle { 0% { scale: 1 1; } 50% { scale: 1.1 1; } 100% { scale: 1 1; } }
+@keyframes scaleToggle2 { 0% { scale: 1 1; } 50% { scale: 1.2 1; } 100% { scale: 1 1; } }
+@keyframes scaleToggle3 { 0% { scale: 1 1; } 50% { scale: 1.1 1; } 100% { scale: 1 1; } }
+
+.switcher {
+  --opt-w: 44px;
+  --opt-h: 40px;
+  --i: 1;
+  position: relative;
+  isolation: isolate;
+  display: inline-flex;
+  margin: 0;
+  padding: 4px;
+  border: 0;
+  border-radius: 999px;
+  background: var(--switch-bg);
+  -webkit-backdrop-filter: blur(16px) saturate(1.6);
+  backdrop-filter: blur(16px) saturate(1.6);
+  box-shadow:
+    inset 0 1px 0 var(--hi),
+    0 0 0 1px var(--line),
+    0 14px 30px -12px var(--drop-strong);
+}
+.switcher[data-previous="1"] { --i: 0; }
+.switcher[data-previous="2"] { --i: 1; }
+.switcher[data-previous="3"] { --i: 2; }
+.switcher::before {
+  content: "";
+  position: absolute;
+  z-index: 1;
+  top: 4px;
+  left: 4px;
+  width: var(--opt-w);
+  height: var(--opt-h);
+  border-radius: 999px;
+  background: var(--thumb-bg);
+  box-shadow:
+    inset 0 1px 1px var(--hi),
+    inset 0 0 0 1px var(--line),
+    0 6px 14px -6px var(--drop-strong);
+  translate: calc(var(--i) * var(--opt-w)) 0;
+  transition: translate 0.55s cubic-bezier(0.34, 1.4, 0.64, 1);
+}
+@supports (backdrop-filter: url(#a)) {
+  .switcher::before {
+    -webkit-backdrop-filter: url(#toggler) saturate(1.4);
+    backdrop-filter: url(#toggler) saturate(1.4);
+  }
+}
+.switcher[data-previous="1"]::before { animation: scaleToggle 0.55s ease; }
+.switcher[data-previous="2"]::before { animation: scaleToggle2 0.55s ease; }
+.switcher[data-previous="3"]::before { animation: scaleToggle3 0.55s ease; }
+.switcher__legend {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+.switcher__option {
+  position: relative;
+  z-index: 2;
+  display: grid;
+  place-items: center;
+  width: var(--opt-w);
+  height: var(--opt-h);
+  border-radius: 999px;
+  cursor: pointer;
+  --c: var(--text-muted);
+}
+.switcher__option:has(.switcher__input:checked) { --c: var(--text); }
+.switcher__option:hover { --c: var(--text); }
+.switcher__option:has(.switcher__input:focus-visible) { box-shadow: var(--focus-ring); }
+.switcher__input { position: absolute; inset: 0; margin: 0; opacity: 0; cursor: pointer; }
+.switcher__icon { width: 24px; height: 24px; transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1); }
+.switcher__option:has(.switcher__input:checked) .switcher__icon { transform: scale(1.08); }
+.switcher__filter { position: absolute; width: 0; height: 0; overflow: hidden; pointer-events: none; }

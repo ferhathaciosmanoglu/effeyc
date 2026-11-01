@@ -1,0 +1,81 @@
+# GitHub Pages'e dağıtım.
+# Depo adına göre adresi kendisi belirler:
+#   kullaniciadi.github.io  →  https://kullaniciadi.github.io/        (base: /)
+#   baska-bir-ad            →  https://kullaniciadi.github.io/ad/    (base: /ad/)
+#
+# Tek seferlik kurulum: depo → Settings → Pages → Source: "GitHub Actions"
+#
+# Not: GitHub Pages sunucu kodu çalıştırmaz. Bu derlemede iletişim formu yerine
+# doğrudan iletişim kanalları gösterilir (bkz. vite.config.ts → DEPLOY_TARGET).
+name: GitHub Pages'e dağıt
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Aynı anda tek dağıtım; yeni push öncekini iptal etmez, sıraya girer.
+concurrency:
+  group: github-pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .node-version
+          cache: npm
+
+      - run: npm ci
+
+      - run: npm run lint
+
+      - run: npm test
+
+      - name: Yayın adresini ve base yolunu belirle
+        id: cfg
+        run: |
+          owner=$(echo "${GITHUB_REPOSITORY%%/*}" | tr '[:upper:]' '[:lower:]')
+          repo="${GITHUB_REPOSITORY#*/}"
+          if [ "$(echo "$repo" | tr '[:upper:]' '[:lower:]')" = "$owner.github.io" ]; then
+            echo "base=/"                              >> "$GITHUB_OUTPUT"
+            echo "site=https://$owner.github.io"       >> "$GITHUB_OUTPUT"
+          else
+            echo "base=/$repo/"                        >> "$GITHUB_OUTPUT"
+            echo "site=https://$owner.github.io/$repo" >> "$GITHUB_OUTPUT"
+          fi
+
+      - run: npm run build
+        env:
+          DEPLOY_TARGET: github
+          BASE_PATH: ${{ steps.cfg.outputs.base }}
+          SITE_URL: ${{ steps.cfg.outputs.site }}
+
+      # Tek sayfalık uygulama: bilinmeyen yollarda da site açılsın diye 404.html'i index yap.
+      # (Kendi 404 sayfamız public/404.html; burada onu koruyoruz, yalnızca yoksa oluşturuyoruz.)
+      - run: test -f dist/404.html || cp dist/index.html dist/404.html
+
+      - uses: actions/configure-pages@v5
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

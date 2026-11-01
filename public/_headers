@@ -1,0 +1,35 @@
+# Cloudflare Pages — yanıt başlıkları (https://developers.cloudflare.com/pages/configuration/headers/)
+# Not: Bu kurallar statik dosyalara uygulanır. /api/* yanıt başlıklarını public/_worker.js kendisi ayarlar.
+
+/*
+  X-Content-Type-Options: nosniff
+  X-Frame-Options: DENY
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=(), usb=()
+  Cross-Origin-Opener-Policy: same-origin
+  Strict-Transport-Security: max-age=31536000; includeSubDomains
+  Content-Security-Policy: default-src 'self'; script-src 'self' https://static.cloudflareinsights.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; media-src 'self'; connect-src 'self' https://cloudflareinsights.com; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; upgrade-insecure-requests
+
+# Vite çıktısı dosya adına içerik özeti (hash) ekler: bir yıl önbellekte kalabilir
+/assets/*
+  Cache-Control: public, max-age=31536000, immutable
+
+# Dosya adı değişmeyen görseller: bir gün önbellek
+/apps/*
+  Cache-Control: public, max-age=86400
+/media/*
+  Cache-Control: public, max-age=86400
+/icons/*
+  Cache-Control: public, max-age=86400
+/logo-hero.png
+  Cache-Control: public, max-age=86400
+/logo-hero-light.png
+  Cache-Control: public, max-age=86400
+/switcher-map.png
+  Cache-Control: public, max-age=86400
+/og-image.png
+  Cache-Control: public, max-age=86400
+
+# Demo sayfaları arama sonuçlarında çıkmasın
+/demos/*
+  X-Robots-Tag: noindex

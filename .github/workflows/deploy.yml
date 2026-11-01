@@ -1,0 +1,41 @@
+# İsteğe bağlı: GitHub Actions ile Cloudflare Pages'e dağıtım.
+# Cloudflare'in kendi Git bağlantısını (Workers & Pages → Connect to Git) kullanıyorsanız BU DOSYAYA GEREK YOKTUR;
+# ikisini birden etkinleştirmeyin (çift dağıtım olur).
+#
+# Etkinleştirmek için GitHub deposunda:
+#   Settings → Secrets and variables → Actions
+#     Secrets:   CLOUDFLARE_API_TOKEN  (izin: Account → Cloudflare Pages → Edit)
+#                CLOUDFLARE_ACCOUNT_ID
+#     Variables: CLOUDFLARE_PAGES_PROJECT  (Pages proje adı, ör. effeyc)
+#                SITE_URL                  (ör. https://effeyc.com)
+# CLOUDFLARE_PAGES_PROJECT tanımlı değilse bu iş akışı çalışmaz.
+name: Cloudflare Pages'e dağıt
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    if: ${{ vars.CLOUDFLARE_PAGES_PROJECT != '' }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .node-version
+          cache: npm
+      - run: npm ci
+      - run: npm run lint
+      - run: npm test
+      - run: npm run build
+        env:
+          SITE_URL: ${{ vars.SITE_URL }}
+      - uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: pages deploy dist --project-name=${{ vars.CLOUDFLARE_PAGES_PROJECT }} --branch=${{ github.ref_name }}

@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="tr" data-theme="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <title>effeyc — Günlük Hayatı Kolaylaştıran Akıllı Uygulamalar</title>
+    <meta name="description" content="Zaman, kaybedilen bir hazinedir. effeyc: günlük hayatı kolaylaştıran akıllı uygulamalar — iş, finans, üretkenlik, sağlık ve günlük yaşam için." />
+    <meta name="theme-color" content="#0b0b0d" />
+    <meta name="color-scheme" content="dark light" />
+    <link rel="icon" href="/favicon.ico" sizes="48x48" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+
+    <!-- Open Graph / Twitter (mutlak og:image, og:url ve canonical build sırasında SITE_URL ile eklenir: vite.config.ts) -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="effeyc" />
+    <meta property="og:locale" content="tr_TR" />
+    <meta property="og:title" content="effeyc — Akıllı Uygulamalar" />
+    <meta property="og:description" content="Zaman, kaybedilen bir hazinedir. effeyc: günlük hayatı kolaylaştıran akıllı uygulamalar." />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="effeyc — Akıllı Uygulamalar" />
+    <meta name="twitter:description" content="Zaman, kaybedilen bir hazinedir." />
+
+    <!-- Tema sayfa çizilmeden önce uygulanır (ayrı dosya: satır içi betik yok, katı CSP) -->
+    <script src="/theme-init.js"></script>
+  </head>
+  <body>
+    <noscript>
+      <main style="max-width: 36rem; margin: 5rem auto; padding: 0 1.5rem; font-family: system-ui, sans-serif; color: #f4f4f5">
+        <h1 style="font-size: 2rem; margin: 0 0 0.5rem">effeyc</h1>
+        <p style="color: #a1a1aa; margin: 0 0 1rem">Zaman, kaybedilen bir hazinedir.</p>
+        <p style="color: #a1a1aa">
+          Günlük hayatı kolaylaştıran akıllı uygulamalar. Bu sayfanın etkileşimli bölümleri için tarayıcınızda JavaScript'in açık olması gerekir.
+        </p>
+      </main>
+    </noscript>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

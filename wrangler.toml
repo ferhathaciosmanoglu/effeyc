@@ -1,0 +1,10 @@
+# Cloudflare Pages yapılandırması (https://developers.cloudflare.com/pages/functions/wrangler-configuration/)
+# Git bağlantılı yayında Cloudflare bu dosyayı okur; `npm run deploy` da bunu kullanır.
+name = "effeyc"
+compatibility_date = "2026-06-01"
+pages_build_output_dir = "./dist"
+
+# Gizli değişkenler (RESEND_API_KEY, CONTACT_TO, CONTACT_FROM) BURAYA YAZILMAZ:
+# Cloudflare Pages → Settings → Variables and Secrets bölümünden "Secret" olarak ekleyin
+# ya da: npx wrangler pages secret put RESEND_API_KEY --project-name effeyc
+# Yerel geliştirme için .dev.vars.example dosyasına bakın.
