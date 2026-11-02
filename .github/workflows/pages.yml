@@ -64,7 +64,11 @@ jobs:
       # (Kendi 404 sayfamız public/404.html; burada onu koruyoruz, yalnızca yoksa oluşturuyoruz.)
       - run: test -f dist/404.html || cp dist/index.html dist/404.html
 
+      # enablement: depo ayarlarında Pages kapalıysa açmayı dener
+      # (olmazsa: Settings → Pages → Source: GitHub Actions elle seçilir)
       - uses: actions/configure-pages@v5
+        with:
+          enablement: true
 
       - uses: actions/upload-pages-artifact@v3
         with:
